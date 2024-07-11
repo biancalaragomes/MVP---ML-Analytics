@@ -43,38 +43,19 @@ date_df.write.mode("overwrite").saveAsTable("dim_date")
 
 # COMMAND ----------
 
-# Selecionar colunas de medições
-measurements_columns = [
-    "Unit Price",
-    "Unit Cost",
-    "Total Revenue",
-    "Total Cost",
-    "Units Sold",
-    "Total Profit"
-]
-
-
-measurements_df = amazonSales_df.select(measurements_columns).distinct()
-
-measurements_df = measurements_df.withColumnRenamed("Unit Price", "Unit_Price")
-measurements_df = measurements_df.withColumnRenamed("Unit Cost", "Unit_Cost")
-measurements_df = measurements_df.withColumnRenamed("Total Revenue", "Total_Revenue")
-measurements_df = measurements_df.withColumnRenamed("Total Cost", "Total_Cost")
-measurements_df = measurements_df.withColumnRenamed("Total Profit", "Total_Profit")
-measurements_df = measurements_df.withColumnRenamed("Units Sold", "Units_Sold")
-
-# Salvar a dimensão de medições no Hive Metastore
-measurements_df.write.mode("overwrite").option("overwriteSchema", "true").saveAsTable("dim_measurements")
-
-# COMMAND ----------
-
 # Selecionar colunas de orders
 orders_columns = [
     "Sales Channel",
     "Order Priority",
     "Order ID",
     "Ship Date",
-    "Item Type"
+    "Item Type",
+    "Unit Price",
+    "Unit Cost",
+    "Total Revenue",
+    "Total Cost",
+    "Units Sold",
+    "Total Profit"
 ]
 
 orders_df = amazonSales_df.select(orders_columns).distinct()
@@ -84,9 +65,15 @@ orders_df = orders_df.withColumnRenamed("Order Priority", "Order_Priorit")
 orders_df = orders_df.withColumnRenamed("Order ID", "Order_ID")
 orders_df = orders_df.withColumnRenamed("Ship Date", "Ship_Date")
 orders_df = orders_df.withColumnRenamed("Item Type", "Item_Type")
+orders_df = orders_df.withColumnRenamed("Unit Price", "Unit_Price")
+orders_df = orders_df.withColumnRenamed("Unit Cost", "Unit_Cost")
+orders_df = orders_df.withColumnRenamed("Total Revenue", "Total_Revenue")
+orders_df = orders_df.withColumnRenamed("Total Cost", "Total_Cost")
+orders_df = orders_df.withColumnRenamed("Total Profit", "Total_Profit")
+orders_df = orders_df.withColumnRenamed("Units Sold", "Units_Sold")
 
 # Salvar a dimensão de medições no Hive Metastore
-orders_df.write.mode("overwrite").saveAsTable("dim_orders")
+orders_df.write.mode("overwrite").option("overwriteSchema", "true").saveAsTable("dim_orders")
 
 # COMMAND ----------
 
@@ -157,12 +144,3 @@ fact_df = fact_df.withColumnRenamed("Item Type", "Item_Type")
 # Salvar a tabela de fato no Hive Metastore
 fact_df.write.mode("overwrite").saveAsTable("fact_amazon_sales")
 
-
-
-
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC
-# MAGIC select * from fact_amazon_sales
